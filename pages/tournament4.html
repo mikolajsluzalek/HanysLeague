@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HanysLeague #4 - Upcoming CS2 Tournament</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <a href="index.html" class="logo">HanysLeague</a>
+    <div class="nav-links">
+        <div class="nav-item">
+            <a href="#">Historia Turniejów</a>
+            <div class="dropdown-content">
+                <a href="tournament0.html">HanysLeague 1v1 #0</a>
+                <a href="tournament1.html">HanysLeague 1v1 #1</a>
+                <a href="tournament2.html">HanysLeague 2v2 #2</a>
+                <a href="tournament3.html">HanysLeague 2v2 #3</a>
+            </div>
+        </div>
+        <div class="nav-item">
+            <a href="tournament4.html" class="highlight">HanysLeague #4 - New</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="container">
+    <div id="tournament4" class="tournament-container">
+        <div class="tournament-heading">
+            <h2>HanysLeague #4 - Nadchodzący turniej</h2>
+            <p>Nowy turniej CS2</p>
+        </div>
+
+        <div style="text-align: center; padding: 3rem 0;">
+            <h3 style="margin-bottom: 1rem; color: #ff9900; font-size: 1.8rem;">Już wkrótce!</h3>
+            <p style="font-size: 1.2rem;">Szczegóły dotyczące formatu, daty i zapisów zostaną opublikowane wkrótce.</p>
+            <p style="font-size: 1.2rem; margin-top: 1rem;">Śledź nasze media społecznościowe, aby być na bieżąco.</p>
+        </div>
+
+        <!-- Nowa sekcja ze stołem do gry -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <h3 style="margin-bottom: 1.5rem; color: #ff9900; font-size: 1.8rem;">Losowanie Drużyn</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Kliknij na talię kart, aby rozlosować drużyny w turnieju</p>
+
+            <!-- Zintegrowany stół do gry -->
+            <div class="table-container" style="margin: 0 auto;">
+                <div class="round-table">
+                    <div class="table-pattern"></div>
+                </div>
+
+                <div class="deck" id="deck"></div>
+
+                <!-- 8 graczy dookoła stołu -->
+                <div id="player1" class="player">
+                    <div class="player-name">Drużyna 1</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">lemon</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Denaturas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player2" class="player">
+                    <div class="player-name">Drużyna 2</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Szakal</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Koteo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player3" class="player">
+                    <div class="player-name">Drużyna 3</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Scraw</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Kysiek</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player4" class="player">
+                    <div class="player-name">Drużyna 4</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Szpas</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Pinkus</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player5" class="player">
+                    <div class="player-name">Drużyna 5</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Lex</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Mnichu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player6" class="player">
+                    <div class="player-name">Drużyna 6</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Scrabel</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Dios<br>Maslito</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player7" class="player">
+                    <div class="player-name">Drużyna 7</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Parsley</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Blendzior</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player8" class="player">
+                    <div class="player-name">Drużyna 8</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Milouris</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">hOt_sweep</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>
