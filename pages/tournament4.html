@@ -40,161 +40,808 @@
             <p style="font-size: 1.2rem; margin-top: 1rem;">Śledź nasze media społecznościowe, aby być na bieżąco.</p>
         </div>
 
-        <!-- Nowa sekcja ze stołem do gry -->
-        <div style="text-align: center; margin-top: 2rem;">
-            <h3 style="margin-bottom: 1.5rem; color: #ff9900; font-size: 1.8rem;">Losowanie Drużyn</h3>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Kliknij na talię kart, aby rozlosować drużyny w turnieju</p>
+        <!-- Nawigacja między sekcjami -->
+        <div class="section-nav">
+            <div class="section-nav-item active" onclick="switchSection('losowanie')">Losowanie</div>
+            <div class="section-nav-item" onclick="switchSection('drabinka')">Drabinka</div>
+            <div class="section-nav-item" onclick="switchSection('pickem')">Pick'em</div>
+        </div>
 
-            <!-- Zintegrowany stół do gry -->
-            <div class="table-container" style="margin: 0 auto;">
-                <div class="round-table">
-                    <div class="table-pattern"></div>
-                </div>
+        <!-- Sekcja Losowanie -->
+        <div id="losowanie" class="tournament-section active">
+            <div style="text-align: center; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: #ff9900; font-size: 1.8rem;">Losowanie Drużyn</h3>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem;">Kliknij na talię kart, aby rozlosować drużyny w turnieju</p>
 
-                <div class="deck" id="deck"></div>
+                <!-- Zintegrowany stół do gry -->
+                <div class="table-container" style="margin: 0 auto;">
+                    <div class="round-table">
+                        <div class="table-pattern"></div>
+                    </div>
 
-                <!-- 8 graczy dookoła stołu -->
-                <div id="player1" class="player">
-                    <div class="player-name">Drużyna 1</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">lemon</div>
+                    <div class="deck" id="deck"></div>
+
+                    <!-- 8 graczy dookoła stołu -->
+                    <div id="player1" class="player">
+                        <div class="player-name">Drużyna 1</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">lemon</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Denaturas</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Denaturas</div>
+                    </div>
+
+                    <div id="player2" class="player">
+                        <div class="player-name">16:10>4:3</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Szakal</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Koteo</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="player3" class="player">
+                        <div class="player-name">shinsoo</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Scraw</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Kysiek</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="player4" class="player">
+                        <div class="player-name">Cyberpink2025</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Szpas</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Pinkus</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="player5" class="player">
+                        <div class="player-name">ML DZIK</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Lex</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Mnichu</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="player6" class="player">
+                        <div class="player-name">Drużyna 6</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Scrabel</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Dios<br>Maslito</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="player7" class="player">
+                        <div class="player-name">Drużyna 7</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Parsley</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Blendzior</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="player8" class="player">
+                        <div class="player-name">Drużyna 8</div>
+                        <div class="player-cards">
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">Milouris</div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-inner">
+                                    <div class="card-front"></div>
+                                    <div class="card-back">hOt_sweep</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div id="player2" class="player">
-                    <div class="player-name">Drużyna 2</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Szakal</div>
+        <!-- Sekcja Drabinka -->
+        <div id="drabinka" class="tournament-section">
+            <div style="text-align: center; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: #ff9900; font-size: 1.8rem;">Drabinka Turniejowa</h3>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem;">Przewidywana drabinka turniejowa HanysLeague #4</p>
+
+                <div class="brackets-container">
+                    <!-- Upper Bracket -->
+                    <div class="bracket-section">
+                        <div class="bracket-label">Upper Bracket</div>
+                        <div class="bracket">
+                            <!-- Quarterfinals -->
+                            <div class="round">
+                                <div class="round-title">Ćwierćfinały</div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">Drużyna 1</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">16:10>4:3</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">shinsoo</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">Cyberpink2025</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">ML DZIK</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">Drużyna 6</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">Drużyna 7</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">Drużyna 8</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Semifinals -->
+                            <div class="round">
+                                <div class="round-title">Półfinały</div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upper Finals -->
+                            <div class="round">
+                                <div class="round-title">Upper Final</div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Koteo</div>
+                    </div>
+
+                    <!-- Lower Bracket -->
+                    <div class="bracket-section">
+                        <div class="bracket-label">Lower Bracket</div>
+                        <div class="bracket">
+                            <!-- LB Round 1 -->
+                            <div class="round">
+                                <div class="round-title">Runda 1</div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- LB Round 2 -->
+                            <div class="round">
+                                <div class="round-title">Runda 2</div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- LB Round 3 -->
+                            <div class="round">
+                                <div class="round-title">Lower Semi-Final</div>
+                                <div class="match-wrapper">
+                                    <div class="match">
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                        <div class="team">
+                                            <div class="team-name">TBD</div>
+                                            <div class="score">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grand Finals -->
+                    <div class="finals-section">
+                        <div class="round">
+                            <div class="round-title">Small Final</div>
+                            <div class="match-wrapper">
+                                <div class="match">
+                                    <div class="team">
+                                        <div class="team-name">TBD</div>
+                                        <div class="score">-</div>
+                                    </div>
+                                    <div class="team">
+                                        <div class="team-name">TBD</div>
+                                        <div class="score">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="round-title">Grand Final</div>
+                            <div class="match-wrapper">
+                                <div class="match">
+                                    <div class="team">
+                                        <div class="team-name">TBD</div>
+                                        <div class="score">-</div>
+                                    </div>
+                                    <div class="team">
+                                        <div class="team-name">TBD</div>
+                                        <div class="score">-</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div id="player3" class="player">
-                    <div class="player-name">Drużyna 3</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Scraw</div>
-                            </div>
+        <!-- Sekcja Pick'em -->
+        <div id="pickem" class="tournament-section">
+            <div style="text-align: center; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: #ff9900; font-size: 1.8rem;">Pick'em Challenge</h3>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem;">Wytypuj zwycięzców i zdobądź punkty za trafne przewidywania!</p>
+
+                <!-- Logowanie -->
+                <div id="pickem-login" class="pickem-login-container">
+                    <div class="pickem-login-form">
+                        <h4>Logowanie do Pick'em Challenge</h4>
+                        <div class="login-input-group">
+                            <label for="username">Nazwa użytkownika:</label>
+                            <input type="text" id="username" class="login-input" placeholder="Wprowadź swoją nazwę użytkownika">
                         </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Kysiek</div>
-                            </div>
+                        <div class="login-input-group">
+                            <label for="password">Hasło:</label>
+                            <input type="password" id="password" class="login-input" placeholder="Wprowadź swoje hasło">
+                        </div>
+                        <div class="login-error" id="login-error"></div>
+                        <button class="login-button" onclick="loginToPickem()">Zaloguj się</button>
+
+                        <div class="login-note">
+                            <p>Nie masz konta? Skontaktuj się z administratorem.</p>
                         </div>
                     </div>
                 </div>
 
-                <div id="player4" class="player">
-                    <div class="player-name">Drużyna 4</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Szpas</div>
-                            </div>
+                <!-- Formularz Pick'em (początkowo ukryty) -->
+                <div id="pickem-content" class="pickem-container" style="display: none;">
+                    <!-- Admin Panel (widoczny tylko dla administratorów) -->
+                    <div id="admin-panel" class="admin-panel" style="display: none;">
+                        <div class="admin-header">
+                            <h4>Panel Administratora</h4>
                         </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Pinkus</div>
+                        <div class="admin-controls">
+                            <div class="admin-section">
+                                <h5>Blokowanie wyborów:</h5>
+                                <div class="admin-toggle-group">
+                                    <div class="admin-toggle">
+                                        <label for="lock-upper-quarterfinals">Upper Bracket - Ćwierćfinały:</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="lock-upper-quarterfinals" onchange="toggleBracketLock('upper-quarterfinals')">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="admin-toggle">
+                                        <label for="lock-upper-semifinals">Upper Bracket - Półfinały:</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="lock-upper-semifinals" onchange="toggleBracketLock('upper-semifinals')">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="admin-toggle">
+                                        <label for="lock-upper-final">Upper Bracket - Final:</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="lock-upper-final" onchange="toggleBracketLock('upper-final')">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="admin-toggle">
+                                        <label for="lock-lower-rounds">Lower Bracket - Wszystkie rundy:</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="lock-lower-rounds" onchange="toggleBracketLock('lower-rounds')">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="admin-toggle">
+                                        <label for="lock-finals">Finały:</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="lock-finals" onchange="toggleBracketLock('finals')">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="player5" class="player">
-                    <div class="player-name">Drużyna 5</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Lex</div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Mnichu</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="player6" class="player">
-                    <div class="player-name">Drużyna 6</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Scrabel</div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Dios<br>Maslito</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="player7" class="player">
-                    <div class="player-name">Drużyna 7</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Parsley</div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Blendzior</div>
+                            <div class="admin-section">
+                                <h5>Zarządzanie turniejem:</h5>
+                                <div class="admin-buttons">
+                                    <button class="admin-button" onclick="resetAllPicks()">Resetuj wszystkie wybory</button>
+                                    <button class="admin-button" onclick="exportPickemData()">Eksportuj dane Pick'em</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="player8" class="player">
-                    <div class="player-name">Drużyna 8</div>
-                    <div class="player-cards">
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">Milouris</div>
+                    <div class="pickem-info">
+                        <p>Jak to działa:</p>
+                        <ul class="pickem-rules">
+                            <li>Wybierz drużyny, które według Ciebie wygrają poszczególne mecze w każdej rundzie</li>
+                            <li>Zdobywaj punkty za każde poprawne wytypowanie (Faza grupowa: 1 pkt, Ćwierćfinały: 2 pkt, Półfinały: 4 pkt, Finały: 8 pkt)</li>
+                            <li>Wytypowanie zwycięzcy całego turnieju daje dodatkowe 10 punktów</li>
+                            <li>Osoba z największą liczbą punktów wygrywa nagrodę specjalną</li>
+                        </ul>
+                        <div class="pickem-user-info">
+                            <p>Zalogowano jako: <span id="logged-user-name">Użytkownik</span></p>
+                            <button class="pickem-logout" onclick="logoutFromPickem()">Wyloguj</button>
+                        </div>
+                    </div>
+
+                    <div class="pickem-brackets">
+                        <!-- Upper Bracket -->
+                        <div class="pickem-section">
+                            <div class="pickem-header upper-bracket">
+                                <h4>Upper Bracket</h4>
+                                <div class="bracket-status" id="status-upper-quarterfinals">Status: Odblokowany</div>
+                            </div>
+
+                            <!-- Ćwierćfinały Upper Bracket -->
+                            <div class="pickem-round-header">
+                                <h5>Ćwierćfinały</h5>
+                            </div>
+                            <div class="pickem-matches" id="upper-quarterfinals">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match1" id="match1-team1" class="upper-quarterfinals-pick">
+                                        <label for="match1-team1">Drużyna 1</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match1" id="match1-team2" class="upper-quarterfinals-pick">
+                                        <label for="match1-team2">16:10>4:3</label>
+                                    </div>
+                                </div>
+
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match2" id="match2-team1" class="upper-quarterfinals-pick">
+                                        <label for="match2-team1">shinsoo</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match2" id="match2-team2" class="upper-quarterfinals-pick">
+                                        <label for="match2-team2">Cyberpink2025</label>
+                                    </div>
+                                </div>
+
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match3" id="match3-team1" class="upper-quarterfinals-pick">
+                                        <label for="match3-team1">ML DZIK</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match3" id="match3-team2" class="upper-quarterfinals-pick">
+                                        <label for="match3-team2">Drużyna 6</label>
+                                    </div>
+                                </div>
+
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match4" id="match4-team1" class="upper-quarterfinals-pick">
+                                        <label for="match4-team1">Drużyna 7</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="match4" id="match4-team2" class="upper-quarterfinals-pick">
+                                        <label for="match4-team2">Drużyna 8</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Półfinały Upper Bracket -->
+                            <div class="pickem-round-header">
+                                <h5>Półfinały</h5>
+                                <div class="bracket-status" id="status-upper-semifinals">Status: Odblokowany</div>
+                            </div>
+                            <div class="pickem-matches" id="upper-semifinals">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="semi1" id="semi1-team1" class="upper-semifinals-pick">
+                                        <label for="semi1-team1" id="semi1-team1-label">Zwycięzca Q1</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="semi1" id="semi1-team2" class="upper-semifinals-pick">
+                                        <label for="semi1-team2" id="semi1-team2-label">Zwycięzca Q2</label>
+                                    </div>
+                                </div>
+
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="semi2" id="semi2-team1" class="upper-semifinals-pick">
+                                        <label for="semi2-team1" id="semi2-team1-label">Zwycięzca Q3</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="semi2" id="semi2-team2" class="upper-semifinals-pick">
+                                        <label for="semi2-team2" id="semi2-team2-label">Zwycięzca Q4</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Finał Upper Bracket -->
+                            <div class="pickem-round-header">
+                                <h5>Upper Final</h5>
+                                <div class="bracket-status" id="status-upper-final">Status: Odblokowany</div>
+                            </div>
+                            <div class="pickem-matches" id="upper-final">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="upperfinal" id="upperfinal-team1" class="upper-final-pick">
+                                        <label for="upperfinal-team1" id="upperfinal-team1-label">Zwycięzca S1</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="upperfinal" id="upperfinal-team2" class="upper-final-pick">
+                                        <label for="upperfinal-team2" id="upperfinal-team2-label">Zwycięzca S2</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-inner">
-                                <div class="card-front"></div>
-                                <div class="card-back">hOt_sweep</div>
+
+                        <!-- Lower Bracket -->
+                        <div class="pickem-section">
+                            <div class="pickem-header lower-bracket">
+                                <h4>Lower Bracket</h4>
+                                <div class="bracket-status" id="status-lower-rounds">Status: Odblokowany</div>
+                            </div>
+
+                            <!-- Runda 1 Lower Bracket -->
+                            <div class="pickem-round-header">
+                                <h5>Runda 1</h5>
+                            </div>
+                            <div class="pickem-matches" id="lower-round1">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower1" id="lower1-team1" class="lower-rounds-pick">
+                                        <label for="lower1-team1" id="lower1-team1-label">Przegrany Q1</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower1" id="lower1-team2" class="lower-rounds-pick">
+                                        <label for="lower1-team2" id="lower1-team2-label">Przegrany Q2</label>
+                                    </div>
+                                </div>
+
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower2" id="lower2-team1" class="lower-rounds-pick">
+                                        <label for="lower2-team1" id="lower2-team1-label">Przegrany Q3</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower2" id="lower2-team2" class="lower-rounds-pick">
+                                        <label for="lower2-team2" id="lower2-team2-label">Przegrany Q4</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Runda 2 Lower Bracket -->
+                            <div class="pickem-round-header">
+                                <h5>Runda 2</h5>
+                            </div>
+                            <div class="pickem-matches" id="lower-round2">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower3" id="lower3-team1" class="lower-rounds-pick">
+                                        <label for="lower3-team1" id="lower3-team1-label">Zwycięzca LR1-1</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower3" id="lower3-team2" class="lower-rounds-pick">
+                                        <label for="lower3-team2" id="lower3-team2-label">Przegrany S1</label>
+                                    </div>
+                                </div>
+
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower4" id="lower4-team1" class="lower-rounds-pick">
+                                        <label for="lower4-team1" id="lower4-team1-label">Zwycięzca LR1-2</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lower4" id="lower4-team2" class="lower-rounds-pick">
+                                        <label for="lower4-team2" id="lower4-team2-label">Przegrany S2</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lower Semi-Final -->
+                            <div class="pickem-round-header">
+                                <h5>Lower Semi-Final</h5>
+                            </div>
+                            <div class="pickem-matches" id="lower-semifinal">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lowersemi" id="lowersemi-team1" class="lower-rounds-pick">
+                                        <label for="lowersemi-team1" id="lowersemi-team1-label">Zwycięzca LR2-1</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="lowersemi" id="lowersemi-team2" class="lower-rounds-pick">
+                                        <label for="lowersemi-team2" id="lowersemi-team2-label">Zwycięzca LR2-2</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Finals -->
+                        <div class="pickem-section">
+                            <div class="pickem-header finals">
+                                <h4>Finały</h4>
+                                <div class="bracket-status" id="status-finals">Status: Odblokowany</div>
+                            </div>
+
+                            <!-- Small Final -->
+                            <div class="pickem-round-header">
+                                <h5>Small Final (Mecz o 3 miejsce)</h5>
+                            </div>
+                            <div class="pickem-matches" id="small-final">
+                                <div class="pickem-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="smallfinal" id="smallfinal-team1" class="finals-pick">
+                                        <label for="smallfinal-team1" id="smallfinal-team1-label">Przegrany Upper Final</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="smallfinal" id="smallfinal-team2" class="finals-pick">
+                                        <label for="smallfinal-team2" id="smallfinal-team2-label">Zwycięzca Lower Semi</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Grand Final -->
+                            <div class="pickem-round-header">
+                                <h5>Grand Final</h5>
+                            </div>
+                            <div class="pickem-matches" id="grand-final">
+                                <div class="pickem-match grand-final-match">
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="grandfinal" id="grandfinal-team1" class="finals-pick">
+                                        <label for="grandfinal-team1" id="grandfinal-team1-label">Zwycięzca Upper Final</label>
+                                    </div>
+                                    <div class="match-vs">VS</div>
+                                    <div class="pickem-team-option">
+                                        <input type="radio" name="grandfinal" id="grandfinal-team2" class="finals-pick">
+                                        <label for="grandfinal-team2" id="grandfinal-team2-label">Zwycięzca Small Final</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pickem-champion-section">
+                            <div class="pickem-header">
+                                <h4>Wybierz zwycięzcę całego turnieju:</h4>
+                            </div>
+
+                            <div class="pickem-champion">
+                                <select id="champion-select" class="champion-dropdown">
+                                    <option value="" disabled selected>-- Wybierz zwycięzcę --</option>
+                                    <option value="team1">Drużyna 1</option>
+                                    <option value="team2">16:10>4:3</option>
+                                    <option value="team3">shinsoo</option>
+                                    <option value="team4">Cyberpink2025</option>
+                                    <option value="team5">ML DZIK</option>
+                                    <option value="team6">Drużyna 6</option>
+                                    <option value="team7">Drużyna 7</option>
+                                    <option value="team8">Drużyna 8</option>
+                                </select>
+                            </div>
+
+                            <div class="pickem-submit">
+                                <button class="submit-picks" onclick="savePickemSelections()">Zapisz typy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pickem-leaderboard">
+                        <h4>Top 5 graczy Pick'em:</h4>
+                        <table class="leaderboard-table">
+                            <thead>
+                            <tr>
+                                <th>Miejsce</th>
+                                <th>Gracz</th>
+                                <th>Punkty</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -202,6 +849,39 @@
     </div>
 </div>
 
-<script src="scripts.js"></script>
+<script src="/scripts.js"></script>
+<script>
+    // Funkcja do przełączania między sekcjami
+    function switchSection(sectionId) {
+        // Usuń klasę active ze wszystkich sekcji
+        document.querySelectorAll('.tournament-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Usuń klasę active ze wszystkich elementów nawigacji
+        document.querySelectorAll('.section-nav-item').forEach(navItem => {
+            navItem.classList.remove('active');
+        });
+
+        // Dodaj klasę active do wybranej sekcji
+        document.getElementById(sectionId).classList.add('active');
+
+        // Dodaj klasę active do klikniętego elementu nawigacji
+        Array.from(document.querySelectorAll('.section-nav-item')).find(
+            navItem => navItem.textContent.toLowerCase().includes(sectionId)
+        ).classList.add('active');
+
+        // Jeśli wybrano sekcję losowania, inicjalizuj stół do gry
+        if (sectionId === 'losowanie') {
+            initializeTable();
+        }
+    }
+
+    // Po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', function() {
+        // Domyślnie aktywna sekcja Losowanie
+        switchSection('losowanie');
+    });
+</script>
 </body>
 </html>
