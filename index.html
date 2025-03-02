@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HanysLeague - Turnieje CS:GO i CS2</title>
+    <style>
+        /* Style dla stołu do gry */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap');
+
+        .table-container {
+            position: relative;
+            width: 800px;
+            height: 800px;
+            margin-bottom: 3rem;
+        }
+
+        .round-table {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background-color: #1A1A1A;
+            border-radius: 50%;
+            border: 20px solid #3A3A3A;
+            box-shadow: 0 0 100px rgba(255, 167, 38, 0.2),
+            inset 0 0 60px rgba(255, 167, 38, 0.1);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .table-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, transparent 0%, transparent 70%, rgba(255, 167, 38, 0.1) 100%),
+            repeating-linear-gradient(45deg, rgba(255, 167, 38, 0.05) 0px, rgba(255, 167, 38, 0.05) 2px, transparent 2px, transparent 10px);
+            border-radius: 50%;
+        }
+
+        .deck {
+            position: absolute;
+            width: 100px;
+            height: 140px;
+            background-color: #1A1A1A;
+            border-radius: 10px;
+            border: 2px solid #FFA726;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 167, 38, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 5;
+        }
+
+        .deck:before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background-image: repeating-linear-gradient(45deg, #FFA726 25%, transparent 25%, transparent 75%, #FFA726 75%, #FFA726),
+            repeating-linear-gradient(45deg, #FFA726 25%, transparent 25%, transparent 75%, #FFA726 75%, #FFA726);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            border-radius: 8px;
+            opacity: 0.4;
+        }
+
+        .deck:after {
+            content: '♠ ♥ ♦ ♣';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FFA726;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(255, 167, 38, 0.8);
+            font-weight: bold;
+        }
+
+        .deck:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 167, 38, 0.4);
+        }
+
+        .deck.clicked {
+            cursor: default;
+            opacity: 0.5;
+            transform: translate(-50%, -50%) scale(0.95);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 167, 38, 0.2);
+        }
+
+        .player {
+            position: absolute;
+            width: 160px;
+            text-align: center;
+        }
+
+        .player-name {
+            color: #FFA726;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(255, 167, 38, 0.3);
+        }
+
+        .player-cards {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .card {
+            width: 60px;
+            height: 84px;
+            background-color: #1A1A1A;
+            border-radius: 8px;
+            border: 2px solid #FFA726;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 167, 38, 0.2);
+            cursor: pointer;
+            perspective: 1000px;
+            display: none;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .card-front {
+            background-color: #2A2A2A;
+            background-image: repeating-linear-gradient(45deg, rgba(255, 167, 38, 0.2) 25%, transparent 25%, transparent 75%, rgba(255, 167, 38, 0.2) 75%, rgba(255, 167, 38, 0.2)),
+            repeating-linear-gradient(45deg, rgba(255, 167, 38, 0.2) 25%, transparent 25%, transparent 75%, rgba(255, 167, 38, 0.2) 75%, rgba(255, 167, 38, 0.2));
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            border: 2px solid #1A1A1A;
+        }
+
+        .card-back {
+            background-color: #2A2A2A;
+            color: #FFA726;
+            transform: rotateY(180deg);
+            padding: 8px;
+            font-size: 10px;
+            word-wrap: break-word;
+            overflow: hidden;
+            text-align: center;
+            border: 2px solid #1A1A1A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Pozycje graczy */
+        #player1 {
+            left: 320px;
+            top: 60px;
+        }
+
+        #player2 {
+            right: 140px;
+            top: 140px;
+        }
+
+        #player3 {
+            right: 60px;
+            top: 320px;
+        }
+
+        #player4 {
+            right: 140px;
+            bottom: 140px;
+        }
+
+        #player5 {
+            left: 320px;
+            bottom: 60px;
+        }
+
+        #player6 {
+            left: 140px;
+            bottom: 140px;
+        }
+
+        #player7 {
+            left: 60px;
+            top: 320px;
+        }
+
+        #player8 {
+            left: 140px;
+            top: 140px;
+        }
+
+        /* Animacja dla rozdawania kart */
+        @keyframes dealCard {
+            0% {
+                transform: translate(300px, 300px) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff9900;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .logo:hover {
+            color: #ffb144;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-item {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .nav-item a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-item a:hover {
+            color: #ffffff;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #1e1e1e;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 0;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: #cccccc;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #2a2a2a;
+        }
+
+        .nav-item:hover .dropdown-content {
+            display: block;
+        }
+
+        .highlight {
+            color: #ff9900;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .welcome {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .welcome h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ff9900;
+        }
+
+        .welcome p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Tournament brackets styling */
+        .tournament-container {
+            margin: 2rem 0;
+            padding: 2rem;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .tournament-heading {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .tournament-heading h2 {
+            font-size: 2.2rem;
+            color: #ff9900;
+            margin-bottom: 1rem;
+        }
+
+        .participants-list {
+            background-color: #262626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .participants-list h3 {
+            margin-bottom: 0.5rem;
+            color: #ff9900;
+        }
+
+        .teams-table-container {
+            overflow-x: auto;
+        }
+
+        .teams-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #262626;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .teams-table th,
+        .teams-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .teams-table th {
+            background-color: #1a1a1a;
+            color: #ff9900;
+            font-weight: bold;
+        }
+
+        .teams-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .teams-table tbody tr:hover {
+            background-color: #2c2c2c;
+        }
+
+        /* Basic bracket structure */
+        .bracket {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            margin-top: 2rem;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 250px;
+        }
+
+        .match-wrapper {
+            padding: 10px;
+        }
+
+        .match {
+            background-color: #262626;
+            border-radius: 15px;
+            padding: 10px;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+        }
+
+        .team:not(:last-child) {
+            border-bottom: 1px solid #333;
+        }
+
+        .team-name {
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+
+        .score {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .round-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #999;
+        }
+
+        .connector {
+            position: absolute;
+            right: -15px;
+            height: 2px;
+            background-color: #555;
+            width: 15px;
+        }
+
+        .connector-vertical {
+            position: absolute;
+            right: -15px;
+            width: 2px;
+            background-color: #555;
+        }
+
+        /* Loser bracket styling */
+        .brackets-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .bracket-section {
+            margin-bottom: 1rem;
+        }
+
+        .bracket-label {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #ff9900;
+            margin-bottom: 1rem;
+        }
+
+        /* Finals section styling */
+        .finals-section {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <a href="#" class="logo" onclick="showSection('home')">HanysLeague</a>
+    <div class="nav-links">
+        <div class="nav-item">
+            <a href="#">Historia Turniejów</a>
+            <div class="dropdown-content">
+                <a href="#" onclick="showSection('tournament0')">HanysLeague 1v1 #0</a>
+                <a href="#" onclick="showSection('tournament1')">HanysLeague 1v1 #1</a>
+                <a href="#" onclick="showSection('tournament2')">HanysLeague 2v2 #2</a>
+                <a href="#" onclick="showSection('tournament3')">HanysLeague 2v2 #3</a>
+            </div>
+        </div>
+        <div class="nav-item">
+            <a href="#" class="highlight" onclick="showSection('tournament4')">HanysLeague #4 - New</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="container">
+    <!-- Home Section -->
+    <div id="home" class="welcome">
+        <h1>Witaj w HanysLeague</h1>
+        <p>Oficjalna strona turniejów CS:GO i CS2!</p>
+        <p>Wybierz turniej z menu "Historia Turniejów" lub sprawdź nadchodzący turniej HanysLeague #4.</p>
+    </div>
+
+    <!-- Tournament 0 -->
+    <div id="tournament0" class="tournament-container hidden">
+        <div class="tournament-heading">
+            <h2>HanysLeague 1v1 #0</h2>
+            <p>Turniej indywidualny CS:GO - 26.12.2020</p>
+        </div>
+
+
+        <div class="teams-table-container">
+            <table class="teams-table">
+                <thead>
+                <tr>
+                    <th>Zawodnicy</th>
+                    <th>Zawodnicy</th>
+                    <th>Zawodnicy</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Bugz</td>
+                    <td>Paterek</td>
+                    <td>Vapeshu</td>
+                </tr>
+                <tr>
+                    <td>Scraw</td>
+                    <td>Hexor</td>
+                    <td>Blendzior</td>
+                </tr>
+                <tr>
+                    <td>Lex</td>
+                    <td>Pinkus</td>
+                    <td>Patrzyk</td>
+                </tr>
+                <tr>
+                    <td>Kysiek</td>
+                    <td>Krakers</td>
+                    <td>Szpas</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- Single Elimination Bracket -->
+        <div class="bracket">
+            <!-- 1/8 Finals (Round of 16) -->
+            <div class="round">
+                <div class="round-title">1/8 Finału</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Bugz</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Paterek</div>
+                            <div class="score">14</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Vapeshu</div>
+                            <div class="score">7</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Scraw</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Hexor</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Blendzior</div>
+                            <div class="score">8</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Lex</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Pinkus</div>
+                            <div class="score">14</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Patrzyk</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Kysiek</div>
+                            <div class="score">9</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Krakers</div>
+                            <div class="score">10</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Szpas</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quarterfinals -->
+            <div class="round">
+                <div class="round-title">Ćwierćfinały</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Bugz</div>
+                            <div class="score">9</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Scraw</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Hexor</div>
+                            <div class="score">11</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Lex</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Patrzyk</div>
+                            <div class="score">13</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Szpas (Stand in - Blendzior)</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semifinals -->
+            <div class="round">
+                <div class="round-title">Mini Finał</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Scraw</div>
+                            <div class="score">23</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Lex</div>
+                            <div class="score">21</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finals -->
+            <div class="round">
+                <div class="round-title">Finał</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Scraw</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Szpas</div>
+                            <div class="score">11</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Tournament 1 -->
+    <div id="tournament1" class="tournament-container hidden">
+        <div class="tournament-heading">
+            <h2>HanysLeague 1v1 #1</h2>
+            <p>Turniej indywidualny CS:GO - 05.01.2021 </p>
+        </div>
+
+        <div class="teams-table-container">
+            <table class="teams-table">
+                <thead>
+                <tr>
+                    <th>Zawodnicy</th>
+                    <th>Zawodnicy</th>
+                    <th>Zawodnicy</th>
+                    <th>Zawodnicy</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Szpas</td>
+                    <td>Paterek</td>
+                    <td>Vapeshu</td>
+                    <td>Masło</td>
+                </tr>
+                <tr>
+                    <td>Bugz</td>
+                    <td>Blendzior</td>
+                    <td>Lex</td>
+                    <td>Piekar</td>
+                </tr>
+                <tr>
+                    <td>Pinkus</td>
+                    <td>Hexor</td>
+                    <td>Kteo</td>
+                    <td>Nanjar</td>
+                </tr>
+                <tr>
+                    <td>Flinston</td>
+                    <td>Kysiek</td>
+                    <td>Patrzyk</td>
+                    <td>Parsley</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Single Elimination Bracket -->
+        <div class="bracket">
+            <!-- 1/8 Finals (Round of 16) -->
+            <div class="round">
+                <div class="round-title" style="margin-bottom: 8rem;">1/8 Finału</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Paterek</div>
+                            <div class="score">11</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Vapesh</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Szpas</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Masło</div>
+                            <div class="score">12</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Bugz</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Blendzior</div>
+                            <div class="score">8</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Lex</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Piekar</div>
+                            <div class="score">11</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Pinkus</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Hexor</div>
+                            <div class="score">10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Kteo</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Nanjar</div>
+                            <div class="score">8</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Flinston</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Kysiek</div>
+                            <div class="score">10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Patrzyk</div>
+                            <div class="score">6</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Parsley</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quarterfinals -->
+            <div class="round">
+                <div class="round-title">Ćwierćfinały</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Vapesh</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Szpas</div>
+                            <div class="score">8</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Bugz</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Lex</div>
+                            <div class="score">9</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Pinkus</div>
+                            <div class="score">16</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Kteo</div>
+                            <div class="score">10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Flinston</div>
+                            <div class="score">4</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Parsley</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semifinals -->
+            <div class="round">
+                <div class="round-title" style="margin-bottom: 3rem;">Półfinały</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Vapesh</div>
+                            <div class="score">12</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Bugz</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Pinkus</div>
+                            <div class="score">5</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Parsley</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 3rd Place -->
+            <div class="round">
+                <div class="round-title">Mecz o 3 miejsce</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Vapesh [WALKOWER]</div>
+                            <div class="score">0</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Pinkus</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finals -->
+            <div class="round">
+                <div class="round-title">Finał</div>
+                <div class="match-wrapper">
+                    <div class="match">
+                        <div class="team">
+                            <div class="team-name">Bugz</div>
+                            <div class="score">10</div>
+                        </div>
+                        <div class="team">
+                            <div class="team-name">Parsley</div>
+                            <div class="score">16</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament 2 -->
+    <div id="tournament2" class="tournament-container hidden">
+        <div class="tournament-heading">
+            <h2>HanysLeague 2v2 #2</h2>
+            <p>Turniej drużynowy CS:GO - 25.04.2022</p>
+        </div>
+
+        <div class="participants-list">
+            <h3>Lista drużyn:</h3>
+            <div class="teams-table-container">
+                <table class="teams-table">
+                    <thead>
+                    <tr>
+                        <th>Nazwa Drużyny</th>
+                        <th>Zawodnicy</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Drużyna A</td>
+                        <td>Scraw, Cebers</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna B</td>
+                        <td>Mnich , Hexor</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna C</td>
+                        <td>Lex, Kysiek</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna D</td>
+                        <td>Szpas, Denaturas</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna E</td>
+                        <td>Parsley, Patrzyk</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna F</td>
+                        <td>Nanjar, Fryta</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna G</td>
+                        <td>Kteo, Blendzior</td>
+                    </tr>
+                    <tr>
+                        <td>Drużyna H</td>
+                        <td>Szakal, Loniek</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="brackets-container">
+            <!-- Upper Bracket -->
+            <div class="bracket-section">
+                <div class="bracket-label">Upper Bracket</div>
+                <div class="bracket">
+                    <!-- Quarterfinals -->
+                    <div class="round">
+                        <div class="round-title">Ćwierćfinały</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">A</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">B</div>
+                                    <div class="score">5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">C</div>
+                                    <div class="score">2</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">D</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">E</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">F</div>
+                                    <div class="score">1</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">G</div>
+                                    <div class="score">7</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">H</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Semifinals -->
+                    <div class="round">
+                        <div class="round-title">Półfinały</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">A</div>
+                                    <div class="score">7</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">D</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">E</div>
+                                    <div class="score">15</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">H</div>
+                                    <div class="score">13</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upper Finals -->
+                    <div class="round">
+                        <div class="round-title">Upper Final</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">D</div>
+                                    <div class="score">6</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">E</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Bracket -->
+            <div class="bracket-section">
+                <div class="bracket-label">Lower Bracket</div>
+                <div class="bracket">
+                    <!-- LB Round 1 -->
+                    <div class="round">
+                        <div class="round-title">Runda 1</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">B</div>
+                                    <div class="score">4</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">C</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">F</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">G</div>
+                                    <div class="score">3</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LB Round 2 -->
+                    <div class="round">
+                        <div class="round-title">Runda 2</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">C</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">H</div>
+                                    <div class="score">6</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">F</div>
+                                    <div class="score">7</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">A</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LB Round 2 (Lower Final) -->
+                    <div class="round">
+                        <div class="round-title">Lower Final</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">C</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">A</div>
+                                    <div class="score">4</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Grand Finals -->
+            <div class="finals-section">
+                <div class="round">
+                    <div class="round-title">Small Final</div>
+                    <div class="match-wrapper">
+                        <div class="match">
+                            <div class="team">
+                                <div class="team-name">D</div>
+                                <div class="score">9</div>
+                            </div>
+                            <div class="team">
+                                <div class="team-name">C</div>
+                                <div class="score">2</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="round-title">Grand Final</div>
+                    <div class="match-wrapper">
+                        <div class="match">
+                            <div class="team">
+                                <div class="team-name">E</div>
+                                <div class="score">1</div>
+                            </div>
+                            <div class="team">
+                                <div class="team-name">D</div>
+                                <div class="score">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament 3 -->
+    <div id="tournament3" class="tournament-container hidden">
+        <div class="tournament-heading">
+            <h2>HanysLeague 2v2 #3</h2>
+            <p>Turniej drużynowy CS:GO - 16.10.2023</p>
+        </div>
+
+        <div class="participants-list">
+            <h3>Lista drużyn:</h3>
+            <div class="teams-table-container">
+                <table class="teams-table">
+                    <thead>
+                    <tr>
+                        <th>Nazwa Drużyny</th>
+                        <th>Zawodnicy</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Team Fisting</td>
+                        <td>Lex, Maslo</td>
+                    </tr>
+                    <tr>
+                        <td>BezVAT</td>
+                        <td>szpas, Loniek</td>
+                    </tr>
+                    <tr>
+                        <td>Kocham Stupki</td>
+                        <td>kteo, Paterek</td>
+                    </tr>
+                    <tr>
+                        <td>nie wiem</td>
+                        <td>scrable, Nanjaro</td>
+                    </tr>
+                    <tr>
+                        <td>StuuWet Dream</td>
+                        <td>szakal, Mnichu</td>
+                    </tr>
+                    <tr>
+                        <td>PaNaTo</td>
+                        <td>Parsley, Agout</td>
+                    </tr>
+                    <tr>
+                        <td>Wuc Jes Muj</td>
+                        <td>scraw, Hexor</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="brackets-container">
+            <!-- Upper Bracket -->
+            <div class="bracket-section">
+                <div class="bracket-label">Upper Bracket</div>
+                <div class="bracket">
+                    <!-- Quarterfinals -->
+                    <div class="round">
+                        <div class="round-title">Ćwierćfinały</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">Team Fisting</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">BezVAT</div>
+                                    <div class="score">4</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">Kocham Stupki</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">nie wiem</div>
+                                    <div class="score">7</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">StuuWet Dream</div>
+                                    <div class="score">7</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">PaNaTo</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">Wuc Jes Muj</div>
+                                    <div class="score"></div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">[PUSTY LOS]</div>
+                                    <div class="score"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Semifinals -->
+                    <div class="round">
+                        <div class="round-title">Półfinały</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">Team Fisting</div>
+                                    <div class="score">3</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">Kocham Stupki</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">PaNaTo</div>
+                                    <div class="score">9</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">Wuc Jes Muj</div>
+                                    <div class="score">7</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upper Finals -->
+                    <div class="round">
+                        <div class="round-title">Upper Final</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">Kocham Stupki</div>
+                                    <div class="score">6</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">PaNaTo</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Bracket -->
+            <div class="bracket-section">
+                <div class="bracket-label">Lower Bracket</div>
+                <div class="bracket">
+                    <!-- LB Round 1 -->
+                    <div class="round">
+                        <div class="round-title">Runda 1</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">BezVAT</div>
+                                    <div class="score"></div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">[PUSTY LOS]</div>
+                                    <div class="score"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">nie wiem</div>
+                                    <div class="score">6</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">StuuWet Dream</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LB Round 2 -->
+                    <div class="round">
+                        <div class="round-title">Runda 2</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">BezVAT</div>
+                                    <div class="score">3</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">Wuc Jes Muj</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">StuuWet Dream</div>
+                                    <div class="score">0</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">Team Fisting</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LB Round 3 -->
+                    <div class="round">
+                        <div class="round-title">Lower Semi-Final</div>
+                        <div class="match-wrapper">
+                            <div class="match">
+                                <div class="team">
+                                    <div class="team-name">Wuc Jes Muj</div>
+                                    <div class="score">7</div>
+                                </div>
+                                <div class="team">
+                                    <div class="team-name">Team Fisting</div>
+                                    <div class="score">9</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grand Finals -->
+            <div class="finals-section">
+                <div class="round">
+                    <div class="round-title">Small Final</div>
+                    <div class="match-wrapper">
+                        <div class="match">
+                            <div class="team">
+                                <div class="team-name">Team Fisting</div>
+                                <div class="score">9</div>
+                            </div>
+                            <div class="team">
+                                <div class="team-name">Kocham Stupki</div>
+                                <div class="score">7</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="round-title">Grand Final</div>
+                    <div class="match-wrapper">
+                        <div class="match">
+                            <div class="team">
+                                <div class="team-name">PaNaTo</div>
+                                <div class="score">1</div>
+                            </div>
+                            <div class="team">
+                                <div class="team-name">Team Fisting</div>
+                                <div class="score">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tournament4" class="tournament-container hidden">
+        <div class="tournament-heading">
+            <h2>HanysLeague #4 - Nadchodzący turniej</h2>
+            <p>Nowy turniej CS2</p>
+        </div>
+
+        <div style="text-align: center; padding: 3rem 0;">
+            <h3 style="margin-bottom: 1rem; color: #ff9900; font-size: 1.8rem;">Już wkrótce!</h3>
+            <p style="font-size: 1.2rem;">Szczegóły dotyczące formatu, daty i zapisów zostaną opublikowane wkrótce.</p>
+            <p style="font-size: 1.2rem; margin-top: 1rem;">Śledź nasze media społecznościowe, aby być na bieżąco.</p>
+        </div>
+
+        <!-- Nowa sekcja ze stołem do gry -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <h3 style="margin-bottom: 1.5rem; color: #ff9900; font-size: 1.8rem;">Losowanie Drużyn</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Kliknij na talię kart, aby rozlosować drużyny w turnieju</p>
+
+            <!-- Zintegrowany stół do gry -->
+            <div class="table-container" style="margin: 0 auto;">
+                <div class="round-table">
+                    <div class="table-pattern"></div>
+                </div>
+
+                <div class="deck" id="deck"></div>
+
+                <!-- 8 graczy dookoła stołu -->
+                <div id="player1" class="player">
+                    <div class="player-name">Drużyna 1</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">lemon</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Denaturas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player2" class="player">
+                    <div class="player-name">Drużyna 2</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Szakal</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Koteo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player3" class="player">
+                    <div class="player-name">Drużyna 3</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Scraw</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Kysiek</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player4" class="player">
+                    <div class="player-name">Drużyna 4</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Szpas</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Pinkus</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player5" class="player">
+                    <div class="player-name">Drużyna 5</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Lex</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Mnichu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player6" class="player">
+                    <div class="player-name">Drużyna 6</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Scrabel</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Dios<br>Maslito</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player7" class="player">
+                    <div class="player-name">Drużyna 7</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Parsley</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Blendzior</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="player8" class="player">
+                    <div class="player-name">Drużyna 8</div>
+                    <div class="player-cards">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">Milouris</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">hOt_sweep</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Function to show selected section and hide others
+    function showSection(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('.container > div').forEach(div => {
+            div.classList.add('hidden');
+        });
+
+        // Show selected section
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+    function initializeTable() {
+        const deck = document.getElementById('deck');
+        const cards = document.querySelectorAll('.card');
+        let deckClicked = false;
+
+        // Kliknięcie na talię kart
+        deck.addEventListener('click', function() {
+            if (!deckClicked) {
+                deckClicked = true;
+                deck.classList.add('clicked');
+                dealCards();
+            }
+        });
+
+        // Rozdanie kart
+        function dealCards() {
+            let delay = 0;
+            cards.forEach(card => {
+                setTimeout(() => {
+                    card.style.display = 'block';
+                    card.style.animation = 'dealCard 0.6s ease-out forwards';
+                }, delay);
+                delay += 150;
+            });
+
+            // Dodanie obsługi kliknięcia na kartę
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('flipped');
+                });
+            });
+        }
+    }
+
+    // Zmodyfikuj funkcję showSection, aby inicjalizować stół do gry
+    const originalShowSection = window.showSection;
+    window.showSection = function(sectionId) {
+        // Wywołaj oryginalną funkcję
+        originalShowSection(sectionId);
+
+        // Jeśli wyświetlana jest sekcja tournament4, zainicjuj stół do gry
+        if (sectionId === 'tournament4') {
+            // Używamy setTimeout, aby dać czas na załadowanie DOM
+            setTimeout(initializeTable, 100);
+        }
+    };
+</script>
+</body>
+</html>
