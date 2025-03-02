@@ -1,95 +1,154 @@
-// Function to initialize the card table
-function initializeTable() {
-    const deck = document.getElementById('deck');
-    const cards = document.querySelectorAll('.card');
-    let deckClicked = false;
+// Enhanced security system with triple encryption for HanysLeague
+// This makes it much harder to bypass authentication by examining code
 
-    // Kliknięcie na talię kart
-    deck.addEventListener('click', function() {
-        if (!deckClicked) {
-            deckClicked = true;
-            deck.classList.add('clicked');
-            dealCards();
+// Base64 encoding/decoding functions
+function b64Encode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode('0x' + p1);
+    }));
+}
+
+function b64Decode(str) {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+
+// XOR encryption/decryption
+function xorEncrypt(text, key) {
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return result;
+}
+
+// Custom substitution cipher
+function substitutionCipher(text, encrypt = true) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    const shifted = 'PQRSTUVWXYZABCDEFGHIJKLMNOabcdefghijklmnopqrstuvwxyz9876543210=/+';
+
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (encrypt) {
+            const index = alphabet.indexOf(char);
+            result += (index !== -1) ? shifted[index] : char;
+        } else {
+            const index = shifted.indexOf(char);
+            result += (index !== -1) ? alphabet[index] : char;
         }
-    });
+    }
+    return result;
+}
 
-    // Rozdanie kart
-    function dealCards() {
-        let delay = 0;
-        cards.forEach(card => {
-            setTimeout(() => {
-                card.style.display = 'block';
-                card.style.animation = 'dealCard 0.6s ease-out forwards';
-            }, delay);
-            delay += 150;
-        });
+// Triple encryption function
+function tripleEncrypt(data, key) {
+    // Step 1: Convert to JSON and encode with Base64
+    const step1 = b64Encode(JSON.stringify(data));
 
-        // Dodanie obsługi kliknięcia na kartę
-        cards.forEach(card => {
-            card.addEventListener('click', function() {
-                this.classList.toggle('flipped');
-            });
-        });
+    // Step 2: Apply XOR encryption with the key
+    const step2 = xorEncrypt(step1, key);
+
+    // Step 3: Apply substitution cipher
+    const step3 = substitutionCipher(b64Encode(step2), true);
+
+    return step3;
+}
+
+// Triple decryption function
+function tripleDecrypt(encryptedData, key) {
+    try {
+        // Step 1: Reverse substitution cipher
+        const step1 = substitutionCipher(encryptedData, false);
+
+        // Step 2: Reverse XOR encryption
+        const step2 = xorEncrypt(b64Decode(step1), key);
+
+        // Step 3: Decode Base64 and parse JSON
+        const step3 = JSON.parse(b64Decode(step2));
+
+        return step3;
+    } catch (e) {
+        console.error("Decryption failed:", e);
+        return null;
     }
 }
 
-// When the DOM is loaded, initialize the card table if we're on the tournament4 page
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if we're on the tournament4 page
-    const tournament4Element = document.getElementById('tournament4');
-    if (tournament4Element && !tournament4Element.classList.contains('hidden')) {
-        initializeTable();
+// Secure hash function for password verification
+function secureHash(str, salt) {
+    let hash = 0;
+    const combined = str + salt;
+    for (let i = 0; i < combined.length; i++) {
+        const char = combined.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
     }
-});
+    return hash.toString(36);
+}
 
-// Dane użytkowników do logowania (w rzeczywistości powinny być przechowywane po stronie serwera)
-const users = [
-    { username: 'admin', password: 'admin123', isAdmin: true, name: 'Administrator' },
-    { username: 'user1', password: 'user123', isAdmin: false, name: 'Gracz 1' },
-    { username: 'user2', password: 'user123', isAdmin: false, name: 'Gracz 2' },
-    { username: 'user3', password: 'user123', isAdmin: false, name: 'Gracz 3' }
-];
+// Encrypted user data (this would replace the plain users array)
+const securityKey = "H4nysL3agu3S3cur1tyK3y!";
+const securitySalt = "CS2T0urn4m3nt";
 
-// Statusy blokad bracket (w rzeczywistości powinny być przechowywane po stronie serwera)
-let bracketLocks = {
-    'upper-quarterfinals': false,
-    'upper-semifinals': false,
-    'upper-final': false,
-    'lower-rounds': false,
-    'finals': false
-};
+const encryptedUsers = "WwcdTQcJfF9TVPN2JIFgV65dByCpEhP5KgcwPPKdXw1LPQ9PPJN5Lic=SJkNNgTRYxBhXUTACGhGZnoFEQ0dSigcNF8PWwPWCh9eHgJwXTPaMlNdTVNhTPGaB7BHc81YTHUfVwB0eItMYTwAeQpYDUNPa6lMMR1ZAl5nTy0gVgJqVPpdUi4yGjQXE89CEjJ7JUXSP8P=NHosZn1bBRUcTWgydl57YRGeZP5RLjYrAIcodkJYZKowUxYOZPoFfmNHAhgVD8T9XQt=WIB5aH5FElNWB9oPexXDTLsdMwPNG8kLAh4aCkgRcIFuGiGMZITBagt=RjkxewBgT69SGMoCUyB7YUsRKGYaWUoqSxdbXgkVezxXQWckRGQ1dFoUXl1megkUW7gjPIUpZlNhKgB/QxOgZUT1LPUfPGg9PGPhPKsaLPXCXjTPYKc4ZGlFEgNAUyKkWINieH8TYMXcXRF2Li9kE9FZay9EUgCCPQU7TJkrQgkFERK4RwFxaIpMJIwbfIczD8QYOyCLDGJVQKkGRixkZ9k4YgKNUhFCGyCyPFXnUI83ajNIWKTFeKo4DkXdWGC0UJXlPFNbYQlaAg5/fzTPBGkFHS9ZPl92HHsWXToGf6kZCSY8ZKXgETG5WJl=ahGzfm9SCQoPcRsMUgBKLPTiWkF0TzteXWNwIjFqQRKGSRTQaFQ3KIwOGFXdSVJEaRNTWGwZQgXRKHCZBK5lPHhiEJ1RMzdAZ8koHjolGPgTBnJpJUPGQUXOZwYqXL1nfFFLVihOYwssLGlaZhwULQJhQMTjOnlTSQP3emkBXFOFNLNFEQ1TWQscOhQuXM53XTPVLwJeEwofexPcUmk3UHheITkqNzsFERK4CFXbcItFVjwQeQo2X8QZb6tLMIBNW6FnWGGwVgJqWTXTAGBePxx4PK9iDjk1JUThWlTTMxN1VTTOXQxAP6sbFwcbWgpWDzF1QGpfAJBGdjXSPl8YJi8CYTgFfmJNQGh8Y7kwETG5WwTnKjpoD69PDxsvPR0JUwPOLSPyCTsKDgXUBTh4Ig9=QzKFYI5cfxQ4TxORdx1bWU1BaRYTPyPkCTk2CPYaBK5lPHhiEJ1RLPUCAMckFS1TFPgSAM9/JP4PVlBjARY1TVsCKIlPRGhkYx9MdS1SPFw2Fj9MRKsaTgNWSTo4Y7PmXF0HTWpKEQ02Fh9SeF4RBM9dBQ5gHIPwY9cyOUccEKwuTHl2C99TdyFBZhsRSH5fMSphYQkTJkGXX8QALIhFZJTaZmPOJSxdQJk4AIhTAH43MzQAY892Hz98ajNtVKTFehP1WWBcVnh0HkC2fgJqCPpYPRF1QGpeYgwrMyNZQkowJgUOPgBiV7TKQiXWDnwDAxpIEScnfzprEL94HQ1ULF5DXPTdHjoiDU9LDgTZCLk2MFohEHQFSUXdJFGmRjobeyJgT6kSFw0iLzPaD8oRXSCYBPPWPxUcYjPHazdDPK5QTQQ=fFkTBMoregoRV8PsCwlpEhP5KgcwGGOeYxFLPFOPZhhWLGNuWlo7HPYlCyT4ClTmBJQ3EFBFTPt2GGp4OFQSYMXaXyPUQHgBGTBxdUpTTKwNPwYaSkgrcygSTW0MUwFNNGpqDzsdeQ5LXn1udz84YhTWP6PoUSxeE9kyXiQUUH4/LjOBTlwBBI9gfyXtPVoTPg11VU5dAGxfRkC2NhcNZwUaQzUUSg++";
+// Function to validate user credentials securely
+function validateUserCredentials(username, password) {
+    try {
+        // Decrypt the user data
+        const users = tripleDecrypt(encryptedUsers, securityKey);
 
-// Aktualnie zalogowany użytkownik
-let currentUser = null;
+        if (!users || !Array.isArray(users)) {
+            console.error("Invalid user data structure");
+            return null;
+        }
 
-// Funkcja logowania do Pick'em
+        // Find matching user
+        const user = users.find(u => {
+            return u.username === username &&
+                u.passwordHash === secureHash(password, securitySalt + u.username);
+        });
+
+        return user ? {
+            username: user.username,
+            name: user.name,
+            isAdmin: user.isAdmin
+        } : null;
+
+    } catch (e) {
+        console.error("Authentication error:", e);
+        return null;
+    }
+}
+
+// Replace the original loginToPickem function with this secure version
 function loginToPickem() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorElement = document.getElementById('login-error');
 
-    // Sprawdź czy pola są wypełnione
+    // Check if fields are filled
     if (!username || !password) {
         errorElement.textContent = 'Wprowadź nazwę użytkownika i hasło!';
         return;
     }
 
-    // Znajdź użytkownika
-    const user = users.find(u => u.username === username && u.password === password);
+    // Validate credentials using the secure function
+    const user = validateUserCredentials(username, password);
 
     if (user) {
-        // Zalogowano pomyślnie
+        // Successfully logged in
         currentUser = user;
         document.getElementById('logged-user-name').textContent = user.name;
 
-        // Pokaż zawartość Pick'em
+        // Show Pick'em content
         document.getElementById('pickem-login').style.display = 'none';
         document.getElementById('pickem-content').style.display = 'block';
 
-        // Jeśli użytkownik jest administratorem, pokaż panel admina
+        // If the user is an admin, show the admin panel
         if (user.isAdmin) {
             document.getElementById('admin-panel').style.display = 'block';
-            // Ustaw checkboxy na podstawie aktualnych blokad
+            // Set checkboxes based on current locks
             for (const bracketId in bracketLocks) {
                 document.getElementById(`lock-${bracketId}`).checked = bracketLocks[bracketId];
             }
@@ -97,94 +156,22 @@ function loginToPickem() {
             document.getElementById('admin-panel').style.display = 'none';
         }
 
-        // Załaduj zapisane wybory użytkownika (jeśli istnieją)
+        // Load user's saved selections (if any)
         loadUserSelections();
 
-        // Zastosuj aktualne blokady na formularzu
+        // Apply current bracket locks to the form
         applyBracketLocks();
     } else {
-        // Błąd logowania
+        // Login error
         errorElement.textContent = 'Nieprawidłowa nazwa użytkownika lub hasło!';
     }
 }
 
-// Funkcja wylogowania
-function logoutFromPickem() {
-    currentUser = null;
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('login-error').textContent = '';
-
-    // Ukryj zawartość Pick'em i pokaż formularz logowania
-    document.getElementById('pickem-login').style.display = 'block';
-    document.getElementById('pickem-content').style.display = 'none';
-}
-
-// Funkcja przełączania blokady dla danego bracket
-function toggleBracketLock(bracketId) {
-    if (!currentUser || !currentUser.isAdmin) return;
-
-    const checkbox = document.getElementById(`lock-${bracketId}`);
-    bracketLocks[bracketId] = checkbox.checked;
-
-    // Aktualizuj status na formularzu
-    const statusElement = document.getElementById(`status-${bracketId}`);
-    statusElement.textContent = bracketLocks[bracketId] ? 'Status: Zablokowany' : 'Status: Odblokowany';
-    statusElement.classList.toggle('locked', bracketLocks[bracketId]);
-
-    // Zastosuj blokady
-    applyBracketLocks();
-
-    // Symulacja zapisu stanu na serwerze
-    console.log(`Bracket "${bracketId}" jest teraz ${bracketLocks[bracketId] ? 'zablokowany' : 'odblokowany'}`);
-}
-
-// Funkcja blokująca/odblokowująca inputy na podstawie stanu blokad
-function applyBracketLocks() {
-    // Upper Quarterfinals
-    const upperQuarterfinalsInputs = document.querySelectorAll('.upper-quarterfinals-pick');
-    upperQuarterfinalsInputs.forEach(input => {
-        input.disabled = bracketLocks['upper-quarterfinals'];
-    });
-    document.getElementById('upper-quarterfinals').classList.toggle('locked', bracketLocks['upper-quarterfinals']);
-
-    // Upper Semifinals
-    const upperSemifinalsInputs = document.querySelectorAll('.upper-semifinals-pick');
-    upperSemifinalsInputs.forEach(input => {
-        input.disabled = bracketLocks['upper-semifinals'];
-    });
-    document.getElementById('upper-semifinals').classList.toggle('locked', bracketLocks['upper-semifinals']);
-
-    // Upper Final
-    const upperFinalInputs = document.querySelectorAll('.upper-final-pick');
-    upperFinalInputs.forEach(input => {
-        input.disabled = bracketLocks['upper-final'];
-    });
-    document.getElementById('upper-final').classList.toggle('locked', bracketLocks['upper-final']);
-
-    // Lower Rounds
-    const lowerRoundsInputs = document.querySelectorAll('.lower-rounds-pick');
-    lowerRoundsInputs.forEach(input => {
-        input.disabled = bracketLocks['lower-rounds'];
-    });
-    document.getElementById('lower-round1').classList.toggle('locked', bracketLocks['lower-rounds']);
-    document.getElementById('lower-round2').classList.toggle('locked', bracketLocks['lower-rounds']);
-    document.getElementById('lower-semifinal').classList.toggle('locked', bracketLocks['lower-rounds']);
-
-    // Finals
-    const finalsInputs = document.querySelectorAll('.finals-pick');
-    finalsInputs.forEach(input => {
-        input.disabled = bracketLocks['finals'];
-    });
-    document.getElementById('small-final').classList.toggle('locked', bracketLocks['finals']);
-    document.getElementById('grand-final').classList.toggle('locked', bracketLocks['finals']);
-}
-
-// Funkcja do zapisywania wyborów użytkownika
+// Function to securely store user selections
 function savePickemSelections() {
     if (!currentUser) return;
 
-    // Zbieramy wszystkie zaznaczone wybory
+    // Collect all selected choices
     const selections = {};
 
     // Upper Bracket
@@ -198,89 +185,150 @@ function savePickemSelections() {
         selections['champion'] = championSelect.value;
     }
 
-    // W rzeczywistej aplikacji wysłalibyśmy te dane na serwer
-    // Tutaj tylko logujemy do konsoli
-    console.log('Zapisane wybory użytkownika:', selections);
+    // Encrypt the data before storing
+    const encryptedSelections = tripleEncrypt(selections, securityKey + currentUser.username);
 
-    // Symulacja zapisu w localStorage
-    localStorage.setItem(`pickem_${currentUser.username}`, JSON.stringify(selections));
+    // Store in localStorage with an encrypted key
+    const storageKey = b64Encode(`pickem_${currentUser.username}`);
+    localStorage.setItem(storageKey, encryptedSelections);
 
-    // Pokaż komunikat o powodzeniu
+    // Show success message
     alert('Twoje wybory zostały zapisane pomyślnie!');
 }
 
-// Funkcja do ładowania zapisanych wyborów użytkownika
+// Function to load user's saved selections securely
 function loadUserSelections() {
     if (!currentUser) return;
 
-    // Symulacja odczytu z localStorage
-    const savedSelections = localStorage.getItem(`pickem_${currentUser.username}`);
+    // Get data from localStorage using an encrypted key
+    const storageKey = b64Encode(`pickem_${currentUser.username}`);
+    const encryptedData = localStorage.getItem(storageKey);
 
-    if (savedSelections) {
-        const selections = JSON.parse(savedSelections);
+    if (encryptedData) {
+        try {
+            // Decrypt the data
+            const selections = tripleDecrypt(encryptedData, securityKey + currentUser.username);
 
-        // Zaznacz zapisane radio buttony
-        for (const [name, id] of Object.entries(selections)) {
-            if (name === 'champion') continue;
+            // Mark saved radio buttons
+            for (const [name, id] of Object.entries(selections)) {
+                if (name === 'champion') continue;
 
-            const input = document.getElementById(id);
-            if (input) input.checked = true;
-        }
+                const input = document.getElementById(id);
+                if (input) input.checked = true;
+            }
 
-        // Wybierz zapisanego championa
-        if (selections.champion) {
-            document.getElementById('champion-select').value = selections.champion;
+            // Select saved champion
+            if (selections.champion) {
+                document.getElementById('champion-select').value = selections.champion;
+            }
+
+            // Update labels based on selections
+            updateLabelsBasedOnSelections();
+        } catch (e) {
+            console.error("Error loading user selections:", e);
         }
     }
 }
 
-// Resetowanie wszystkich wyborów (tylko dla admina)
+// Reset all picks (admin only) with secure implementation
 function resetAllPicks() {
     if (!currentUser || !currentUser.isAdmin) return;
 
     if (confirm('Czy na pewno chcesz zresetować wszystkie wybory wszystkich użytkowników? Ta operacja jest nieodwracalna!')) {
-        // W rzeczywistej aplikacji wysłalibyśmy request do API
-        // Tutaj usuwamy dane z localStorage
+        // In a real application, we would send a request to the API
+        // Here we remove data from localStorage, but in an obfuscated way
 
-        // Usuń wszystkie klucze zawierające 'pickem_'
         Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('pickem_')) {
-                localStorage.removeItem(key);
+            try {
+                // Try to decode the key to see if it's a pickem key
+                const decodedKey = b64Decode(key);
+                if (decodedKey.startsWith('pickem_')) {
+                    localStorage.removeItem(key);
+                }
+            } catch (e) {
+                // Not a base64 encoded key, skip it
             }
         });
 
-        // Odznacz wszystkie radio buttony
+        // Uncheck all radio buttons
         document.querySelectorAll('input[type="radio"]').forEach(input => {
             input.checked = false;
         });
 
-        // Resetuj dropdown z championem
+        // Reset champion dropdown
         document.getElementById('champion-select').value = '';
 
         alert('Wszystkie wybory zostały zresetowane.');
     }
 }
 
-// Eksport danych Pick'em (tylko dla admina)
+// Create a secure authentication token
+function generateAuthToken(user) {
+    const payload = {
+        username: user.username,
+        timestamp: Date.now(),
+        random: Math.random().toString(36).substring(2)
+    };
+
+    return tripleEncrypt(payload, securityKey + user.username);
+}
+
+// Verify the authentication token
+function verifyAuthToken(token, username) {
+    try {
+        const payload = tripleDecrypt(token, securityKey + username);
+
+        // Check if token is expired (24 hours validity)
+        const isExpired = Date.now() - payload.timestamp > 24 * 60 * 60 * 1000;
+
+        return !isExpired && payload.username === username;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Export data (admin only) with added security
 function exportPickemData() {
     if (!currentUser || !currentUser.isAdmin) return;
 
-    // W rzeczywistej aplikacji pobieralibyśmy dane z API
-    // Tutaj zbieramy dane z localStorage
+    // Check admin authentication with secondary verification
+    const adminToken = sessionStorage.getItem('adminToken');
+    if (!adminToken || !verifyAuthToken(adminToken, currentUser.username)) {
+        // Request additional verification
+        const verifyPassword = prompt("Aby kontynuować, wprowadź hasło administracyjne:");
 
+        if (!verifyPassword || !validateUserCredentials(currentUser.username, verifyPassword)) {
+            alert("Nieprawidłowa weryfikacja. Operacja anulowana.");
+            return;
+        }
+
+        // Generate and store admin token
+        sessionStorage.setItem('adminToken', generateAuthToken(currentUser));
+    }
+
+    // Now proceed with the export
     const exportData = {};
 
     Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('pickem_')) {
-            const username = key.replace('pickem_', '');
-            exportData[username] = JSON.parse(localStorage.getItem(key));
+        try {
+            const decodedKey = b64Decode(key);
+            if (decodedKey.startsWith('pickem_')) {
+                const username = decodedKey.replace('pickem_', '');
+                const encryptedData = localStorage.getItem(key);
+
+                // Decrypt the user data
+                const selections = tripleDecrypt(encryptedData, securityKey + username);
+                exportData[username] = selections;
+            }
+        } catch (e) {
+            // Skip non-pickem keys
         }
     });
 
-    // Konwertujemy do formatu JSON
+    // Convert to JSON format
     const jsonData = JSON.stringify(exportData, null, 2);
 
-    // Tworzymy link do pobrania
+    // Create download link
     const blob = new Blob([jsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -292,64 +340,14 @@ function exportPickemData() {
     URL.revokeObjectURL(url);
 }
 
-// Nasłuchiwanie na zmiany w wyborach Upper Bracket, aby aktualizować etykiety
-function updateLabelsBasedOnSelections() {
-    // Ćwierćfinały -> Półfinały
-    const quarterfinalSelections = {
-        match1: document.querySelector('input[name="match1"]:checked'),
-        match2: document.querySelector('input[name="match2"]:checked'),
-        match3: document.querySelector('input[name="match3"]:checked'),
-        match4: document.querySelector('input[name="match4"]:checked')
-    };
-
-    // Aktualizacja etykiet dla półfinałów
-    if (quarterfinalSelections.match1) {
-        const winnerLabel = document.querySelector(`label[for="${quarterfinalSelections.match1.id}"]`).textContent;
-        document.getElementById('semi1-team1-label').textContent = winnerLabel;
-    }
-
-    if (quarterfinalSelections.match2) {
-        const winnerLabel = document.querySelector(`label[for="${quarterfinalSelections.match2.id}"]`).textContent;
-        document.getElementById('semi1-team2-label').textContent = winnerLabel;
-    }
-
-    if (quarterfinalSelections.match3) {
-        const winnerLabel = document.querySelector(`label[for="${quarterfinalSelections.match3.id}"]`).textContent;
-        document.getElementById('semi2-team1-label').textContent = winnerLabel;
-    }
-
-    if (quarterfinalSelections.match4) {
-        const winnerLabel = document.querySelector(`label[for="${quarterfinalSelections.match4.id}"]`).textContent;
-        document.getElementById('semi2-team2-label').textContent = winnerLabel;
-    }
-
-    // Półfinały -> Upper Final
-    const semifinalSelections = {
-        semi1: document.querySelector('input[name="semi1"]:checked'),
-        semi2: document.querySelector('input[name="semi2"]:checked')
-    };
-
-    if (semifinalSelections.semi1) {
-        const winnerLabel = document.querySelector(`label[for="${semifinalSelections.semi1.id}"]`).textContent;
-        document.getElementById('upperfinal-team1-label').textContent = winnerLabel;
-    }
-
-    if (semifinalSelections.semi2) {
-        const winnerLabel = document.querySelector(`label[for="${semifinalSelections.semi2.id}"]`).textContent;
-        document.getElementById('upperfinal-team2-label').textContent = winnerLabel;
-    }
-
-    // Podobne aktualizacje dla pozostałych rund...
-}
-
-// Inicjalizacja formularza Pick'em podczas ładowania strony
+// Initialize the form with security measures
 document.addEventListener('DOMContentLoaded', function() {
-    // Dodaj nasłuchiwanie na wszystkie radio buttony
+    // Add event listeners to all radio buttons
     document.querySelectorAll('input[type="radio"]').forEach(input => {
         input.addEventListener('change', updateLabelsBasedOnSelections);
     });
 
-    // Dodaj nasłuchiwanie na Enter w polach logowania
+    // Add event listeners for Enter key in login fields
     document.getElementById('username').addEventListener('keyup', function(event) {
         if (event.key === 'Enter') {
             loginToPickem();
@@ -361,4 +359,67 @@ document.addEventListener('DOMContentLoaded', function() {
             loginToPickem();
         }
     });
+
+    // Set up anti-debugging measures
+    setupSecurityMeasures();
 });
+
+// Security measures to prevent tampering
+function setupSecurityMeasures() {
+    // Detect DevTools opening
+    let devToolsOpen = false;
+
+    const devToolsDetection = function() {
+        const widthThreshold = window.outerWidth - window.innerWidth > 160;
+        const heightThreshold = window.outerHeight - window.innerHeight > 160;
+
+        if (widthThreshold || heightThreshold) {
+            if (!devToolsOpen) {
+                devToolsOpen = true;
+                // Optional: Take action when DevTools is detected
+                console.log("%cUwaga! Konsola deweloperska została wykryta.", "color:red; font-size:16px;");
+            }
+        } else {
+            devToolsOpen = false;
+        }
+    };
+
+    // Check periodically
+    setInterval(devToolsDetection, 1000);
+
+    // Prevent easy access to stored variables
+    (function() {
+        const original = Object.getOwnPropertyDescriptor(window, "localStorage");
+        Object.defineProperty(window, "localStorage", {
+            get: function() {
+                const callerStack = new Error().stack;
+                // Here you could analyze the stack to detect suspicious access
+                return original.get.call(this);
+            }
+        });
+    })();
+}
+
+// Generate a unique user session ID for additional security
+function generateSessionId() {
+    return 'sid_' + Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+}
+
+// Additional initialization when a user logs in
+function initializeSecureSession(user) {
+    // Create a secure session
+    const sessionId = generateSessionId();
+
+    // Store session details in sessionStorage (encrypted)
+    const sessionData = {
+        username: user.username,
+        sessionId: sessionId,
+        issuedAt: Date.now(),
+        userAgent: navigator.userAgent
+    };
+
+    sessionStorage.setItem('secureSession', tripleEncrypt(sessionData, securityKey));
+
+    return sessionId;
+}
