@@ -168,10 +168,11 @@ function loginToPickem() {
 }
 
 // Function to securely store user selections
+// Modyfikacja funkcji savePickemSelections, aby wysyłać dane na email
 function savePickemSelections() {
     if (!currentUser) return;
 
-    // Collect all selected choices
+    // Zbieramy wszystkie zaznaczone wybory
     const selections = {};
 
     // Upper Bracket
@@ -185,6 +186,10 @@ function savePickemSelections() {
         selections['champion'] = championSelect.value;
     }
 
+    // Dodaj informacje o użytkowniku i datę
+    selections.username = currentUser.username;
+    selections.timestamp = new Date().toISOString();
+
     // Encrypt the data before storing
     const encryptedSelections = tripleEncrypt(selections, securityKey + currentUser.username);
 
@@ -192,8 +197,46 @@ function savePickemSelections() {
     const storageKey = b64Encode(`pickem_${currentUser.username}`);
     localStorage.setItem(storageKey, encryptedSelections);
 
-    // Show success message
+    // Wysyłanie danych na email
+    sendSelectionsToEmail(selections);
+
+    // Pokaż komunikat o powodzeniu
     alert('Twoje wybory zostały zapisane pomyślnie!');
+}
+
+// Funkcja wysyłająca dane na email przy użyciu EmailJS
+function sendSelectionsToEmail(selections) {
+    // Przygotuj dane do wysłania
+    const emailData = {
+        to_email: 'bicepskula@gmail.com',
+        subject: `HanysLeague Pick'em - Wybory użytkownika ${selections.username}`,
+        message: JSON.stringify(selections, null, 2),
+        from_name: selections.username,
+        reply_to: 'noreply@hanysleague.com'
+    };
+
+    // Zapisz wybory do pliku JSON i wywołaj pobieranie
+    const jsonString = JSON.stringify(selections, null, 2);
+    const blob = new Blob([jsonString], {type: 'application/json'});
+
+    // Użyj FormData do wysłania danych
+    const formData = new FormData();
+    formData.append('file', blob, `pickem_${selections.username}_${new Date().toISOString().slice(0, 10)}.json`);
+    formData.append('email', 'bicepskula@gmail.com');
+    formData.append('subject', `HanysLeague Pick'em - Wybory użytkownika ${selections.username}`);
+    formData.append('message', `Wybory użytkownika ${selections.username} z dnia ${new Date().toLocaleString()}`);
+
+    // Metoda 1: Użycie FormSubmit.co (najprostsze rozwiązanie, bez rejestracji)
+    fetch('https://formsubmit.co/bicepskula@gmail.com', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            console.log('Email z wyborami został wysłany pomyślnie');
+        })
+        .catch(error => {
+            console.error('Błąd podczas wysyłania emaila:', error);
+        });
 }
 
 // Function to load user's saved selections securely
@@ -363,6 +406,39 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set up anti-debugging measures
     setupSecurityMeasures();
 });
+
+function logoutFromPickem() {
+    // Wyczyść dane sesji
+    currentUser = null;
+
+    // Wyczyść tokeny bezpieczeństwa
+    sessionStorage.removeItem('adminToken');
+    sessionStorage.removeItem('secureSession');
+
+    // Ukryj panel zawartości Pick'em
+    document.getElementById('pickem-content').style.display = 'none';
+
+    // Pokaż panel logowania
+    document.getElementById('pickem-login').style.display = 'block';
+
+    // Wyczyść pola formularza logowania
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('login-error').textContent = '';
+
+    // Usuń wszystkie zaznaczenia radio buttonów
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+    });
+
+    // Resetuj dropdown z championem
+    if (document.getElementById('champion-select')) {
+        document.getElementById('champion-select').value = '';
+    }
+
+    console.log('Użytkownik został wylogowany');
+}
+
 
 // Security measures to prevent tampering
 function setupSecurityMeasures() {
