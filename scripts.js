@@ -323,69 +323,8 @@ function updateLabelsBasedOnSelections() {
     }
 }
 
-// Function to securely store user selections
-function savePickemSelections() {
-    if (!currentUser) return;
 
-    // Collect all selected choices
-    const selections = {};
 
-    // Upper Bracket
-    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
-        selections[input.name] = input.id;
-    });
-
-    // Champion
-    const championSelect = document.getElementById('champion-select');
-    if (championSelect && championSelect.value) {
-        selections['champion'] = championSelect.value;
-    }
-
-    // Add user information and date
-    selections.username = currentUser.username;
-    selections.timestamp = new Date().toISOString();
-
-    // Store in localStorage
-    const storageKey = `pickem_${currentUser.username}`;
-    localStorage.setItem(storageKey, JSON.stringify(selections));
-
-    // Send data to Google Sheets
-    sendSelectionsToGoogleSheets(selections);
-
-    // Show success message
-    alert('Twoje wybory zostały zapisane pomyślnie!');
-}
-
-// Function to send selections to Google Sheets
-function sendSelectionsToGoogleSheets(selections) {
-    console.log("Wysyłane dane:", selections);
-
-    // Format the data for the API
-    const formattedData = {
-        username: selections.username,
-        timestamp: selections.timestamp,
-        selections: JSON.stringify(selections)
-    };
-
-    // Create a deployment URL for the Google Apps Script Web App
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwXSVziL9tJejfLj3QONA1YEaoCXNbRSIe0StI3hgQtEs16fYm2NlXxV-bFLaz8iOUX2Q/exec'; // Replace with your actual web app URL
-
-    // Send data to Google Sheets via fetch API
-    fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors', // Important for cross-origin requests to Google Apps Script
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formattedData)
-    })
-        .then(response => {
-            console.log('Data sent to Google Sheets successfully');
-        })
-        .catch(error => {
-            console.error('Error sending data to Google Sheets:', error);
-        });
-}
 
 // Function to load user's saved selections
 function loadUserSelections() {
